@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jurnal Mengajar Digital Pro - SMPN 1 Deket</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Chart.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            /* Neon Gradient & Modern Palette (Light Mode) */
+            --primary: #6366f1;
+            --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+            --card-gradient: linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(243, 244, 246, 0.8));
+            --bg-main: #f1f5f9;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --border-color: rgba(226, 232, 240, 0.8);
+            --input-bg: #ffffff;
+            --table-header: rgba(241, 245, 249, 0.9);
+            --table-hover: rgba(243, 244, 246, 0.6);
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --shadow-glow: 0 10px 25px -5px rgba(99, 102, 241, 0.25);
+            --radius-lg: 20px;
+            --radius-md: 12px;
+        }
+
+        /* Dark Mode Theme Variable Overrides */
+        body.dark-mode {
+            --bg-main: #090d16;
+            --card-bg: rgba(15, 23, 42, 0.75);
+            --card-gradient: linear-gradient(145deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.8));
+            --text-dark: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: rgba(51, 65, 85, 0.6);
+            --input-bg: #0f172a;
+            --table-header: rgba(30, 41, 59, 0.8);
+            --table-hover: rgba(30, 41, 59, 0.5);
+            --shadow-glow: 0 10px 25px -5px rgba(168, 85, 247, 0.3);
+        }
+
+        * { 
+            box-sizing: border-box; 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
+
+        body { 
+            background: var(--bg-main); 
+            color: var(--text-dark); 
+            margin: 0; 
+            padding: 24px; 
+            min-height: 100vh;
+            background-image: radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.12) 0px, transparent 50%),
+                              radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.12) 0px, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        .container { max-width: 1280px; margin: 0 auto; }
+
+        /* Modern Header */
+        header { 
+            background: var(--primary-gradient);
+            color: white; 
+            padding: 22px 30px; 
+            border-radius: var(--radius-lg); 
+            margin-bottom: 24px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            box-shadow: var(--shadow-glow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .header-brand { display: flex; align-items: center; gap: 16px; position: relative; z-index: 1; }
+        .header-logo {
+            width: 58px;
+            height: 58px;
+            object-fit: contain;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 6px;
+            border-radius: 16px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+            transform: rotate(-2deg);
+        }
+
+        header h1 { margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -0.5px; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        header p { margin: 4px 0 0; font-size: 13px; opacity: 0.95; font-weight: 500; }
+        
+        .header-actions { display: flex; align-items: center; gap: 12px; position: relative; z-index: 1; }
+        .badge { 
+            background: rgba(255, 255, 255, 0.2); 
+            backdrop-filter: blur(12px);
+            padding: 6px 16px; 
+            border-radius: 30px; 
+            font-size: 12px; 
+            font-weight: 700;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-theme {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-theme:hover { background: rgba(255, 255, 255, 0.35); transform: translateY(-2px); }
+
+        /* Dashboard Stats Grid */
+        .stats-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
+            gap: 18px; 
+            margin-bottom: 24px; 
+        }
+        .stat-card { 
+            background: var(--card-gradient);
+            backdrop-filter: blur(16px);
+            padding: 20px 22px; 
+            border-radius: var(--radius-lg); 
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
+        }
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 4px; height: 100%;
+            background: var(--primary-gradient);
+        }
+        .stat-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-glow); }
+        .stat-card p { margin: 0; font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 800; letter-spacing: 0.8px; }
+        .stat-card h3 { margin: 8px 0 0; font-size: 26px; color: var(--text-dark); font-weight: 800; }
+
+        /* Layout Grid */
+        .main-grid { display: grid; grid-template-columns: 400px 1fr; gap: 24px; }
+        @media (max-width: 992px) { .main-grid { grid-template-columns: 1fr; } }
+
+        /* Glassmorphism Card Container */
+        .card { 
+            background: var(--card-bg); 
+            backdrop-filter: blur(16px);
+            padding: 24px; 
+            border-radius: var(--radius-lg); 
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 24px;
+        }
+        .card h2 { 
+            margin-top: 0; 
+            font-size: 16px; 
+            font-weight: 800;
+            border-bottom: 1px solid var(--border-color); 
+            padding-bottom: 14px; 
+            margin-bottom: 18px; 
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Form Controls */
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 6px; color: var(--text-dark); }
+        .form-control { 
+            width: 100%; 
+            padding: 11px 15px; 
+            border: 1px solid var(--border-color); 
+            border-radius: var(--radius-md); 
+            font-size: 13px; 
+            outline: none; 
+            background-color: var(--input-bg);
+            color: var(--text-dark);
+        }
+        .form-control:focus { 
+            border-color: #a855f7; 
+            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.25); 
+        }
+        .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+        /* Section Divider Form */
+        .form-section-title {
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 18px 0 10px 0;
+            padding-bottom: 4px;
+            border-bottom: 1px dashed var(--border-color);
+        }
+
+        /* Buttons Style */
+        .btn { 
+            border: none; 
+            padding: 11px 18px; 
+            border-radius: var(--radius-md); 
+            font-size: 13px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 8px; 
+        }
+        .btn-primary { 
+            background: var(--primary-gradient); 
+            color: white; 
+            width: 100%; 
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+        .btn-primary:hover { opacity: 0.95; transform: translateY(-2px); box-shadow: var(--shadow-glow); }
+        .btn-success { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; }
+        .btn-info { background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%); color: white; }
+        .btn-secondary { background: var(--border-color); color: var(--text-dark); }
+        .btn-secondary:hover { opacity: 0.85; }
+        .btn-danger { background: rgba(239, 68, 68, 0.15); color: #ef4444; padding: 5px 12px; font-size: 11px; border-radius: 8px; border: none; font-weight: 700; }
+        .btn-danger:hover { background: #ef4444 !important; color: white !important; }
+
+        /* Filter Container */
+        .filter-container {
+            background: var(--input-bg);
+            padding: 16px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            margin-bottom: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .filter-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
+        .filter-item { flex: 1; min-width: 130px; }
+        .filter-item label { display: block; font-size: 11px; font-weight: 800; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; }
+        .action-group { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+        /* Table Design */
+        .table-responsive { overflow-x: auto; border-radius: var(--radius-md); }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
+        th { 
+            background: var(--table-header); 
+            padding: 14px 12px; 
+            font-size: 11px; 
+            text-transform: uppercase; 
+            color: var(--text-muted); 
+            border-bottom: 2px solid var(--border-color); 
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+        td { padding: 12px; border-bottom: 1px solid var(--border-color); vertical-align: middle; color: var(--text-dark); }
+        tr:hover { background-color: var(--table-hover); }
+        
+        .tag-badge { 
+            background: rgba(99, 102, 241, 0.15); 
+            color: var(--primary); 
+            padding: 4px 10px; 
+            border-radius: 20px; 
+            font-size: 11px; 
+            font-weight: 800; 
+            display: inline-block;
+        }
+        .tag-pertemuan {
+            background: rgba(236, 72, 153, 0.15);
+            color: #ec4899;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 800;
+            display: inline-block;
+        }
+
+        /* Compact Chart Container Styling */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 16px;
+            margin-top: 24px;
+        }
+        @media (max-width: 768px) { .charts-grid { grid-template-columns: 1fr; } }
+        
+        .chart-card {
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            position: relative;
+        }
+        .chart-card h3 {
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin: 0 0 12px 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .chart-wrapper {
+            position: relative;
+            height: 220px;
+            width: 100%;
+        }
+
+        /* Print Style */
+        .print-header, .print-footer { display: none; }
+
+        @media print {
+            body { background-color: white !important; color: black !important; padding: 0 !important; }
+            header, .stats-grid, .card:first-child, .filter-container, .btn-danger, .badge, .btn-theme, .hide-print, .charts-grid {
+                display: none !important;
+            }
+            .main-grid { display: block !important; }
+            .card { border: none !important; box-shadow: none !important; padding: 0 !important; background: transparent !important; }
+            .card h2 { display: none !important; }
+            
+            .print-header {
+                display: flex !important;
+                align-items: center;
+                justify-content: center;
+                gap: 15px;
+                border-bottom: 3px double #000;
+                padding-bottom: 8px;
+                margin-bottom: 15px;
+            }
+            .print-header img { width: 75px; height: 75px; object-fit: contain; }
+            .print-header-text { text-align: center; }
+            .print-header-text h3 { margin: 0; font-size: 11pt; text-transform: uppercase; font-weight: normal; }
+            .print-header-text h2 { margin: 2px 0; font-size: 15pt; text-transform: uppercase; font-weight: bold; }
+            .print-header-text p { margin: 1px 0; font-size: 8.5pt; color: #000; line-height: 1.2; }
+            .report-title { margin-top: 10px; font-size: 11pt; font-weight: bold; text-decoration: underline; text-align: center; }
+
+            table { width: 100% !important; border-collapse: collapse !important; font-size: 9.5pt !important; }
+            th, td { border: 1px solid #000 !important; padding: 6px 8px !important; color: #000 !important; }
+            th { background-color: #f2f2f2 !important; }
+            .tag-badge, .tag-pertemuan { background: none !important; color: #000 !important; padding: 0 !important; font-weight: normal !important; }
+            
+            .print-footer { display: flex !important; justify-content: space-between; margin-top: 30px; font-size: 9.5pt; }
+            .print-signature { text-align: center; width: 240px; }
+            .print-signature .space { height: 50px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Header Utama -->
+        <header>
+            <div class="header-brand">
+                <img src="LOGO SEKOLAH DEKET.jpg" alt="Logo SMPN 1 Deket" class="header-logo">
+                <div>
+                    <h1>SMPN 1 DEKET</h1>
+                    <p>Jurnal Mengajar Digital - KKA & INFORMATIKA</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button onclick="toggleDarkMode()" class="btn-theme" id="themeBtn">
+                    🌙 Dark Mode
+                </button>
+                <span class="badge">Mode Offline</span>
+            </div>
+        </header>
+
+        <!-- Dashboard Statistik Terperinci -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <p>Total Sesi Mengajar</p>
+                <h3 id="statTotalJurnal">0</h3>
+            </div>
+            <div class="stat-card">
+                <p>Pertemuan Ke- Terakhir</p>
+                <h3 id="statLastPertemuan">Ke-0</h3>
+            </div>
+            <div class="stat-card">
+                <p>Total Jam Pelajaran (JP)</p>
+                <h3 id="statTotalJP">0 JP</h3>
+            </div>
+            <div class="stat-card">
+                <p>Total Kelas Diajar</p>
+                <h3 id="statKelasDiajar">0 Kelas</h3>
+            </div>
+        </div>
+
+        <div class="main-grid">
+            <!-- Form Input Jurnal -->
+            <div class="card">
+                <h2>📝 Form Input Jurnal Mengajar</h2>
+                <form id="jurnalForm">
+                    <div class="form-section-title">👤 Identitas Pengajar & Sekolah</div>
+                    <div class="row-2">
+                        <div class="form-group">
+                            <label>Nama Guru Pengajar *</label>
+                            <input type="text" id="namaGuru" placeholder="Nama & Gelar Guru..." required class="form-control" onchange="savePengesahanInfo()">
+                        </div>
+                        <div class="form-group">
+                            <label>NIP Guru Pengajar</label>
+                            <input type="text" id="nipGuru" placeholder="NIP Guru..." class="form-control" onchange="savePengesahanInfo()">
+                        </div>
+                    </div>
+
+                    <div class="row-2">
+                        <div class="form-group">
+                            <label>Nama Kepala Sekolah</label>
+                            <input type="text" id="namaKepsek" placeholder="Nama & Gelar Kepsek..." class="form-control" onchange="savePengesahanInfo()">
+                        </div>
+                        <div class="form-group">
+                            <label>NIP Kepala Sekolah</label>
+                            <input type="text" id="nipKepsek" placeholder="NIP Kepsek..." class="form-control" onchange="savePengesahanInfo()">
+                        </div>
+                    </div>
+
+                    <div class="form-section-title">📅 Detail Pembelajaran</div>
+                    <div class="row-2">
+                        <div class="form-group">
+                            <label>Tanggal *</label>
+                            <input type="date" id="tglMengajar" required class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Pertemuan Ke- *</label>
+                            <input type="number" id="pertemuanKe" min="1" placeholder="1" required class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="row-2">
+                        <div class="form-group">
+                            <label>Mulai Jam Ke- *</label>
+                            <input type="number" id="jamMulai" min="1" max="12" placeholder="1" required class="form-control" onchange="calcJP()">
+                        </div>
+                        <div class="form-group">
+                            <label>Sampai Jam Ke- *</label>
+                            <input type="number" id="jamSelesai" min="1" max="12" placeholder="2" required class="form-control" onchange="calcJP()">
+                        </div>
+                    </div>
+
+                    <div class="row-2">
+                        <div class="form-group">
+                            <label>Mata Pelajaran *</label>
+                            <select id="mapel" required class="form-control">
+                                <option value="" disabled selected>-- Pilih Mapel --</option>
+                                <option value="KKA">KKA</option>
+                                <option value="INFORMATIKA">INFORMATIKA</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Kelas *</label>
+                            <select id="kelas" required class="form-control">
+                                <option value="" disabled selected>-- Pilih Kelas --</option>
+                                <optgroup label="Kelas 7">
+                                    <option value="7A">7A</option><option value="7B">7B</option>
+                                    <option value="7C">7C</option><option value="7D">7D</option><option value="7E">7E</option>
+                                </optgroup>
+                                <optgroup label="Kelas 8">
+                                    <option value="8A">8A</option><option value="8B">8B</option>
+                                    <option value="8C">8C</option><option value="8D">8D</option><option value="8E">8E</option>
+                                </optgroup>
+                                <optgroup label="Kelas 9">
+                                    <option value="9A">9A</option><option value="9B">9B</option>
+                                    <option value="9C">9C</option><option value="9D">9D</option><option value="9E">9E</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Materi Pembelajaran *</label>
+                        <textarea id="materi" rows="3" placeholder="Tuliskan materi/topik..." required class="form-control"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Catatan / Absensi Siswa</label>
+                        <textarea id="catatan" rows="2" placeholder="Catatan kelas/kendala..." class="form-control"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">✨ Simpan Catatan Jurnal</button>
+                </form>
+            </div>
+
+            <!-- Tabel Riwayat Data, Filter & Grafik -->
+            <div class="card">
+                <h2>📋 Riwayat Jurnal Mengajar</h2>
+
+                <!-- Kop Hasil Cetak PDF Resmi Sekolah -->
+                <div class="print-header">
+                    <img src="LOGO SEKOLAH DEKET.jpg" alt="Logo SMPN 1 Deket">
+                    <div class="print-header-text">
+                        <h3>PEMERINTAH KABUPATEN LAMONGAN</h3>
+                        <h2>SMP NEGERI 1 DEKET</h2>
+                        <p>NSS: 201050702094 &nbsp;|&nbsp; NPSN: 20506368</p>
+                        <p>Alamat: Ds. Deket Wetan Kec. Deket Kab. Lamongan Kode Pos: 62291</p>
+                        <p>Telp. (0322) 323344, Fax. (0322) 323344 &nbsp;|&nbsp; Pos-el: smpnegeri1deket@gmail.com</p>
+                        <p>Laman: www.smpn1deket.net</p>
+                    </div>
+                </div>
+                <div class="report-title print-header" style="justify-content: center; border: none; margin-bottom: 10px;">
+                    <span id="printPeriodText">LAPORAN REKAPITULASI JURNAL MENGAJAR DIGITAL</span>
+                </div>
+                
+                <!-- Panel Filter Tanggal & Pencarian -->
+                <div class="filter-container">
+                    <div class="filter-row">
+                        <div class="filter-item" style="flex: 2; min-width: 180px;">
+                            <label>Cari Kata Kunci</label>
+                            <input type="text" id="searchInput" oninput="renderTable()" placeholder="Nama guru, kelas, materi..." class="form-control">
+                        </div>
+                        <div class="filter-item">
+                            <label>Dari Tanggal</label>
+                            <input type="date" id="filterTglAwal" onchange="renderTable()" class="form-control">
+                        </div>
+                        <div class="filter-item">
+                            <label>Sampai Tanggal</label>
+                            <input type="date" id="filterTglAkhir" onchange="renderTable()" class="form-control">
+                        </div>
+                    </div>
+                    <div class="action-group">
+                        <button onclick="resetFilter()" class="btn btn-secondary" style="padding: 7px 14px; font-size: 12px;">
+                            🔄 Reset Filter
+                        </button>
+                        <div style="display: flex; gap: 8px;">
+                            <button onclick="cetakPDF()" class="btn btn-info">
+                                🖨️ Cetak PDF (Filter)
+                            </button>
+                            <button onclick="downloadCSV()" class="btn btn-success">
+                                📄 Ekspor CSV
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Tanggal</th>
+                                <th>Pert.</th>
+                                <th>Jam Ke-</th>
+                                <th>Guru</th>
+                                <th>Mapel</th>
+                                <th>Kelas</th>
+                                <th>Materi & Catatan</th>
+                                <th class="hide-print">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            <!-- Data JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Bagian Grafik Ringkas & Elegan (Hide saat Print) -->
+                <div class="charts-grid hide-print">
+                    <div class="chart-card">
+                        <h3>📊 Distribusi Total JP per Kelas</h3>
+                        <div class="chart-wrapper">
+                            <canvas id="classChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <h3>🎯 Perbandingan Mapel</h3>
+                        <div class="chart-wrapper">
+                            <canvas id="mapelChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Tanda Tangan Cetak PDF -->
+                <div class="print-footer">
+                    <div class="print-signature">
+                        <p>Mengetahui,<br>Kepala SMPN 1 Deket</p>
+                        <div class="space"></div>
+                        <p><b id="printKepsekName">____________________</b><br>NIP. <span id="printKepsekNip">-</span></p>
+                    </div>
+                    <div class="print-signature">
+                        <p>Deket, <span id="currentPrintDate"></span><br>Guru Mata Pelajaran</p>
+                        <div class="space"></div>
+                        <p><b id="printGuruName">____________________</b><br>NIP. <span id="printGuruNip">-</span></p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Logika Aplikasi & Chart -->
+    <script>
+        let jurnalData = JSON.parse(localStorage.getItem('jurnalMengajarKKAInformatika')) || [];
+        let classChartInstance = null;
+        let mapelChartInstance = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('theme') === 'dark') {
+                document.body.classList.add('dark-mode');
+                document.getElementById('themeBtn').innerHTML = '☀️ Light Mode';
+            }
+
+            document.getElementById('tglMengajar').valueAsDate = new Date();
+            
+            // Restore Pengesahan Info
+            const lastGuru = localStorage.getItem('lastGuruName');
+            const lastGuruNip = localStorage.getItem('lastGuruNip');
+            const lastKepsek = localStorage.getItem('lastKepsekName');
+            const lastNipKepsek = localStorage.getItem('lastKepsekNip');
+
+            if (lastGuru) document.getElementById('namaGuru').value = lastGuru;
+            if (lastGuruNip) document.getElementById('nipGuru').value = lastGuruNip;
+            if (lastKepsek) document.getElementById('namaKepsek').value = lastKepsek;
+            if (lastNipKepsek) document.getElementById('nipKepsek').value = lastNipKepsek;
+
+            updateDashboard();
+            renderTable();
+        });
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            document.getElementById('themeBtn').innerHTML = isDark ? '☀️ Light Mode' : '🌙 Dark Mode';
+            
+            updateCharts();
+        }
+
+        function savePengesahanInfo() {
+            localStorage.setItem('lastGuruName', document.getElementById('namaGuru').value);
+            localStorage.setItem('lastGuruNip', document.getElementById('nipGuru').value);
+            localStorage.setItem('lastKepsekName', document.getElementById('namaKepsek').value);
+            localStorage.setItem('lastKepsekNip', document.getElementById('nipKepsek').value);
+        }
+
+        // Kalkulasi validasi Jam Ke-
+        function calcJP() {
+            const jamMulai = parseInt(document.getElementById('jamMulai').value) || 0;
+            const jamSelesai = parseInt(document.getElementById('jamSelesai').value) || 0;
+
+            if (jamSelesai > 0 && jamSelesai < jamMulai) {
+                alert("Jam selesai tidak boleh lebih kecil dari jam mulai!");
+                document.getElementById('jamSelesai').value = jamMulai;
+            }
+        }
+
+        // Form Submit
+        document.getElementById('jurnalForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            savePengesahanInfo();
+            const guruVal = document.getElementById('namaGuru').value;
+            const guruNipVal = document.getElementById('nipGuru').value;
+            const jamMulaiVal = parseInt(document.getElementById('jamMulai').value) || 1;
+            const jamSelesaiVal = parseInt(document.getElementById('jamSelesai').value) || jamMulaiVal;
+            const calculatedJP = Math.max(1, (jamSelesaiVal - jamMulaiVal) + 1);
+
+            const newItem = {
+                id: Date.now(),
+                guru: guruVal,
+                guruNip: guruNipVal,
+                tanggal: document.getElementById('tglMengajar').value,
+                pertemuan: parseInt(document.getElementById('pertemuanKe').value) || 1,
+                jamMulai: jamMulaiVal,
+                jamSelesai: jamSelesaiVal,
+                jp: calculatedJP,
+                mapel: document.getElementById('mapel').value,
+                kelas: document.getElementById('kelas').value,
+                materi: document.getElementById('materi').value,
+                catatan: document.getElementById('catatan').value || '-'
+            };
+
+            jurnalData.push(newItem);
+            localStorage.setItem('jurnalMengajarKKAInformatika', JSON.stringify(jurnalData));
+
+            const kepsekVal = document.getElementById('namaKepsek').value;
+            const nipKepsekVal = document.getElementById('nipKepsek').value;
+            
+            this.reset();
+            
+            document.getElementById('namaGuru').value = guruVal;
+            document.getElementById('nipGuru').value = guruNipVal;
+            document.getElementById('namaKepsek').value = kepsekVal;
+            document.getElementById('nipKepsek').value = nipKepsekVal;
+            document.getElementById('tglMengajar').valueAsDate = new Date();
+
+            updateDashboard();
+            renderTable();
+        });
+
+        // Filter Data
+        function getFilteredData() {
+            const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+            const tglAwal = document.getElementById('filterTglAwal').value;
+            const tglAkhir = document.getElementById('filterTglAkhir').value;
+
+            return jurnalData.filter(item => {
+                const matchQuery = (item.guru && item.guru.toLowerCase().includes(searchQuery)) ||
+                                   item.mapel.toLowerCase().includes(searchQuery) ||
+                                   item.kelas.toLowerCase().includes(searchQuery) ||
+                                   item.materi.toLowerCase().includes(searchQuery);
+
+                let matchDate = true;
+                if (tglAwal && item.tanggal < tglAwal) matchDate = false;
+                if (tglAkhir && item.tanggal > tglAkhir) matchDate = false;
+
+                return matchQuery && matchDate;
+            });
+        }
+
+        // Render Table & Charts
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            const filteredData = getFilteredData();
+
+            tbody.innerHTML = '';
+
+            if (filteredData.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:var(--text-muted); padding:24px;">Tidak ada data jurnal yang sesuai.</td></tr>`;
+            } else {
+                filteredData.slice().reverse().forEach(item => {
+                    const jamDisplay = item.jamMulai && item.jamSelesai ? 
+                                       `${item.jamMulai} s/d ${item.jamSelesai} (${item.jp || 1} JP)` : 
+                                       `${item.jp || 1} JP`;
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><b>${item.tanggal}</b></td>
+                        <td><span class="tag-pertemuan">Ke-${item.pertemuan || 1}</span></td>
+                        <td><b>${jamDisplay}</b></td>
+                        <td>${item.guru || '-'}</td>
+                        <td><span class="tag-badge">${item.mapel}</span></td>
+                        <td><b>${item.kelas}</b></td>
+                        <td>
+                            <div><b>${item.materi}</b></div>
+                            <small style="color:var(--text-muted)">Catatan: ${item.catatan}</small>
+                        </td>
+                        <td class="hide-print"><button onclick="hapusData(${item.id})" class="btn btn-danger">Hapus</button></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+
+            updateCharts(filteredData);
+        }
+
+        // Update Charts JS Render
+        function updateCharts(data = getFilteredData()) {
+            const isDark = document.body.classList.contains('dark-mode');
+            const textColor = isDark ? '#94a3b8' : '#64748b';
+
+            // Data JP per Kelas
+            const classMap = {};
+            data.forEach(d => {
+                classMap[d.kelas] = (classMap[d.kelas] || 0) + (d.jp || 1);
+            });
+
+            const classLabels = Object.keys(classMap).sort();
+            const classValues = classLabels.map(k => classMap[k]);
+
+            // Data Perbandingan Mapel
+            let totalKKA = 0, totalInformatika = 0;
+            data.forEach(d => {
+                if (d.mapel === 'KKA') totalKKA += (d.jp || 1);
+                else if (d.mapel === 'INFORMATIKA') totalInformatika += (d.jp || 1);
+            });
+
+            // Destroy Chart Lama Jika Ada
+            if (classChartInstance) classChartInstance.destroy();
+            if (mapelChartInstance) mapelChartInstance.destroy();
+
+            // Render Bar Chart (Kelas)
+            const ctxClass = document.getElementById('classChart').getContext('2d');
+            classChartInstance = new Chart(ctxClass, {
+                type: 'bar',
+                data: {
+                    labels: classLabels.length > 0 ? classLabels : ['Belum Ada Data'],
+                    datasets: [{
+                        label: 'Total JP',
+                        data: classValues.length > 0 ? classValues : [0],
+                        backgroundColor: 'rgba(99, 102, 241, 0.75)',
+                        borderColor: '#6366f1',
+                        borderWidth: 1.5,
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { ticks: { color: textColor, font: { size: 10 } }, grid: { display: false } },
+                        y: { ticks: { color: textColor, font: { size: 10 }, stepSize: 1 }, grid: { color: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' } }
+                    }
+                }
+            });
+
+            // Render Donut Chart (Mapel)
+            const ctxMapel = document.getElementById('mapelChart').getContext('2d');
+            mapelChartInstance = new Chart(ctxMapel, {
+                type: 'doughnut',
+                data: {
+                    labels: ['KKA', 'INFORMATIKA'],
+                    datasets: [{
+                        data: [totalKKA, totalInformatika],
+                        backgroundColor: ['#a855f7', '#ec4899'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { 
+                            position: 'bottom', 
+                            labels: { color: textColor, font: { size: 11, weight: '600' }, boxWidth: 12 } 
+                        }
+                    },
+                    cutout: '68%'
+                }
+            });
+        }
+
+        // Cetak Rekap PDF
+        function cetakPDF() {
+            const filteredData = getFilteredData();
+            if (filteredData.length === 0) {
+                alert("Tidak ada data jurnal untuk dicetak pada filter ini!");
+                return;
+            }
+
+            const tglAwal = document.getElementById('filterTglAwal').value;
+            const tglAkhir = document.getElementById('filterTglAkhir').value;
+            
+            const guruInput = document.getElementById('namaGuru').value;
+            const guruNipInput = document.getElementById('nipGuru').value;
+            const kepsekInput = document.getElementById('namaKepsek').value;
+            const nipKepsekInput = document.getElementById('nipKepsek').value;
+
+            let periodText = "LAPORAN REKAPITULASI JURNAL MENGAJAR DIGITAL";
+            if (tglAwal && tglAkhir) periodText = `LAPORAN REKAPITULASI JURNAL MENGAJAR PERIODE (${tglAwal} s/d ${tglAkhir})`;
+            else if (tglAwal) periodText = `LAPORAN REKAPITULASI JURNAL MENGAJAR (MULAI ${tglAwal})`;
+            else if (tglAkhir) periodText = `LAPORAN REKAPITULASI JURNAL MENGAJAR (SAMPAI ${tglAkhir})`;
+            
+            document.getElementById('printPeriodText').innerText = periodText;
+            document.getElementById('printGuruName').innerText = guruInput || "(____________________)";
+            document.getElementById('printGuruNip').innerText = guruNipInput || "-";
+            document.getElementById('printKepsekName').innerText = kepsekInput || "(____________________)";
+            document.getElementById('printKepsekNip').innerText = nipKepsekInput || "-";
+            
+            const now = new Date();
+            const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('currentPrintDate').innerText = now.toLocaleDateString('id-ID', dateOptions);
+
+            window.print();
+        }
+
+        // Reset Filter
+        function resetFilter() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('filterTglAwal').value = '';
+            document.getElementById('filterTglAkhir').value = '';
+            renderTable();
+        }
+
+        // Hapus Data
+        function hapusData(id) {
+            if(confirm("Hapus catatan jurnal ini?")) {
+                jurnalData = jurnalData.filter(item => item.id !== id);
+                localStorage.setItem('jurnalMengajarKKAInformatika', JSON.stringify(jurnalData));
+                updateDashboard();
+                renderTable();
+            }
+        }
+
+        // Update Dashboard
+        function updateDashboard() {
+            const totalJurnal = jurnalData.length;
+            const totalJP = jurnalData.reduce((acc, curr) => acc + (curr.jp || 1), 0);
+            const kelasSet = new Set(jurnalData.map(item => item.kelas));
+            
+            const lastPertemuanVal = jurnalData.length > 0 ? Math.max(...jurnalData.map(d => d.pertemuan || 1)) : 0;
+
+            document.getElementById('statTotalJurnal').innerText = totalJurnal;
+            document.getElementById('statLastPertemuan').innerText = `Ke-${lastPertemuanVal}`;
+            document.getElementById('statTotalJP').innerText = `${totalJP} JP`;
+            document.getElementById('statKelasDiajar').innerText = `${kelasSet.size} Kelas`;
+        }
+
+        // Export CSV
+        function downloadCSV() {
+            const dataToExport = getFilteredData();
+            if (dataToExport.length === 0) {
+                alert("Tidak ada data untuk diunduh!");
+                return;
+            }
+
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "No,Nama Guru,NIP Guru,Tanggal Mengajar,Pertemuan Ke,Mulai Jam,Sampai Jam,Total JP,Mata Pelajaran,Kelas,Materi Pembelajaran,Catatan/Absensi\n";
+
+            dataToExport.forEach((item, index) => {
+                let guruClean = `"${(item.guru || '-').replace(/"/g, '""')}"`;
+                let guruNipClean = `"${(item.guruNip || '-').replace(/"/g, '""')}"`;
+                let materiClean = `"${item.materi.replace(/"/g, '""')}"`;
+                let catatanClean = `"${item.catatan.replace(/"/g, '""')}"`;
+
+                let row = `${index + 1},${guruClean},${guruNipClean},${item.tanggal},${item.pertemuan || 1},${item.jamMulai || '-'},${item.jamSelesai || '-'},${item.jp || 1},${item.mapel},${item.kelas},${materiClean},${catatanClean}`;
+                csvContent += row + "\n";
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `Rekap_Jurnal_SMPN1Deket_${new Date().toISOString().slice(0,10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>
